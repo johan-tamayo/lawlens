@@ -57,6 +57,100 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
+  "/documents": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /**
+     * Get Documents
+     * @description Get all documents as a list with summaries.
+     *
+     *     Returns:
+     *         DocumentListResponse: List of document summaries with total count
+     *
+     *     Example:
+     *         GET /documents
+     */
+    get: operations["get_documents_documents_get"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/documents/{document_id}": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /**
+     * Get Document By Id
+     * @description Get a specific document by its ID.
+     *
+     *     Args:
+     *         document_id: The document ID (index starting from 0)
+     *         storage_service: Injected document storage service
+     *
+     *     Returns:
+     *         DocumentDetail: Full document details with metadata
+     *
+     *     Raises:
+     *         HTTPException: 404 if document not found
+     *
+     *     Example:
+     *         GET /documents/0
+     *         GET /documents/5
+     */
+    get: operations["get_document_by_id_documents__document_id__get"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/documents/section/{section_number}": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /**
+     * Get Document By Section
+     * @description Get a specific document by its section number.
+     *
+     *     Args:
+     *         section_number: The subsection number (e.g., "1.1", "2.3.1")
+     *         storage_service: Injected document storage service
+     *
+     *     Returns:
+     *         DocumentDetail: Full document details with metadata
+     *
+     *     Raises:
+     *         HTTPException: 404 if document not found
+     *
+     *     Example:
+     *         GET /documents/section/1.1
+     *         GET /documents/section/6.2.3
+     */
+    get: operations["get_document_by_section_documents_section__section_number__get"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
 }
 export type webhooks = Record<string, never>;
 export interface components {
@@ -70,6 +164,55 @@ export interface components {
       source: string;
       /** Text */
       text: string;
+    };
+    /**
+     * DocumentDetail
+     * @description Detailed document model with full text.
+     */
+    DocumentDetail: {
+      /** Id */
+      id: string;
+      /** Text */
+      text: string;
+      metadata: components["schemas"]["DocumentMetadata"];
+    };
+    /**
+     * DocumentListResponse
+     * @description Response model for document list endpoint.
+     */
+    DocumentListResponse: {
+      /** Total */
+      total: number;
+      /** Documents */
+      documents: components["schemas"]["DocumentSummary"][];
+    };
+    /**
+     * DocumentMetadata
+     * @description Document metadata model.
+     */
+    DocumentMetadata: {
+      /** Section */
+      section: string;
+      /** Main Section */
+      main_section: string;
+      /** Subsection Number */
+      subsection_number: string;
+    };
+    /**
+     * DocumentSummary
+     * @description Summary document model for list view.
+     */
+    DocumentSummary: {
+      /** Id */
+      id: string;
+      /** Section */
+      section: string;
+      /** Main Section */
+      main_section: string;
+      /** Subsection Number */
+      subsection_number: string;
+      /** Preview */
+      preview: string;
     };
     /** HTTPValidationError */
     HTTPValidationError: {
@@ -154,6 +297,90 @@ export interface operations {
         };
         content: {
           "application/json": unknown;
+        };
+      };
+    };
+  };
+  get_documents_documents_get: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["DocumentListResponse"];
+        };
+      };
+    };
+  };
+  get_document_by_id_documents__document_id__get: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        /** @description Document ID (numeric index) */
+        document_id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["DocumentDetail"];
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  get_document_by_section_documents_section__section_number__get: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        /** @description Section number (e.g., '1.1') */
+        section_number: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["DocumentDetail"];
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
         };
       };
     };

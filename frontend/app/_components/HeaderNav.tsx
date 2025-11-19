@@ -75,7 +75,7 @@ export default function HeaderNav({
                 <NavButton
                   navIconEnum={NavIconEnum.DOCUMENT}
                   label="Documents"
-                  linkPath="/"
+                  linkPath="/documents"
                 />
                 <NavButton
                   navIconEnum={NavIconEnum.CREATE_PROJECT}

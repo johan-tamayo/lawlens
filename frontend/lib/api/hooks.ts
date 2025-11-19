@@ -17,6 +17,12 @@ import type { paths } from "./schema";
  */
 type QueryResponse =
   paths["/query"]["get"]["responses"]["200"]["content"]["application/json"];
+type DocumentListResponse =
+  paths["/documents"]["get"]["responses"]["200"]["content"]["application/json"];
+type DocumentDetailResponse =
+  paths["/documents/{document_id}"]["get"]["responses"]["200"]["content"]["application/json"];
+type DocumentBySectionResponse =
+  paths["/documents/section/{section_number}"]["get"]["responses"]["200"]["content"]["application/json"];
 
 /**
  * Query Keys
@@ -25,6 +31,10 @@ type QueryResponse =
  */
 export const queryKeys = {
   query: (q: string) => ["query", q] as const,
+  documents: ["documents"] as const,
+  document: (id: string) => ["documents", id] as const,
+  documentBySection: (section: string) =>
+    ["documents", "section", section] as const,
 };
 
 /**
@@ -83,5 +93,106 @@ export function useQueryDocumentsMutation() {
 
       return data;
     },
+  });
+}
+
+/**
+ * useDocuments Hook
+ *
+ * Fetches all documents with their summaries.
+ *
+ * @param options - Additional React Query options
+ * @returns Query result with all documents
+ */
+export function useDocuments(
+  options?: Omit<UseQueryOptions<DocumentListResponse>, "queryKey" | "queryFn">
+) {
+  return useQuery<DocumentListResponse>({
+    queryKey: queryKeys.documents,
+    queryFn: async () => {
+      const { data, error } = await apiClient.GET("/documents");
+
+      if (error) {
+        throw new Error("Failed to fetch documents");
+      }
+
+      return data;
+    },
+    ...options,
+  });
+}
+
+/**
+ * useDocument Hook
+ *
+ * Fetches a specific document by its ID.
+ *
+ * @param documentId - The document ID
+ * @param options - Additional React Query options
+ * @returns Query result with document details
+ */
+export function useDocument(
+  documentId: string,
+  options?: Omit<
+    UseQueryOptions<DocumentDetailResponse>,
+    "queryKey" | "queryFn"
+  >
+) {
+  return useQuery<DocumentDetailResponse>({
+    queryKey: queryKeys.document(documentId),
+    queryFn: async () => {
+      const { data, error } = await apiClient.GET("/documents/{document_id}", {
+        params: {
+          path: { document_id: documentId },
+        },
+      });
+
+      if (error) {
+        throw new Error("Failed to fetch document");
+      }
+
+      return data;
+    },
+    enabled: !!documentId,
+    ...options,
+  });
+}
+
+/**
+ * useDocumentBySection Hook
+ *
+ * Fetches a specific document by its section number.
+ *
+ * @param sectionNumber - The section number (e.g., "1.1")
+ * @param options - Additional React Query options
+ * @returns Query result with document details
+ */
+export function useDocumentBySection(
+  sectionNumber: string,
+  options?: Omit<
+    UseQueryOptions<DocumentBySectionResponse>,
+    "queryKey" | "queryFn"
+  >
+) {
+  return useQuery<DocumentBySectionResponse>({
+    queryKey: queryKeys.documentBySection(sectionNumber),
+    queryFn: async () => {
+      const { data, error } = await apiClient.GET(
+        "/documents/section/{section_number}",
+        {
+          params: {
+            path: { section_number: sectionNumber },
+          },
+        }
+      );
+
+      if (error) {
+        throw new Error("Failed to fetch document");
+      }
+
+      return data;
+    },
+    enabled: !!sectionNumber,
+    ...options,
   });
 }
