@@ -45,3 +45,12 @@ ENV/
 *.egg-info/
 dist/
 build/
+
+# Testing
+.pytest_cache/
+app/tests/htmlcov/
+app/tests/coverage.xml
+app/tests/.coverage
+.coverage
+htmlcov/
+coverage.xml

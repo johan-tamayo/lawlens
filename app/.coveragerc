@@ -1,0 +1,27 @@
+[run]
+source = app
+data_file = tests/.coverage
+omit = 
+    */tests/*
+    */test_*.py
+    */__pycache__/*
+    */venv/*
+    */node_modules/*
+    */.venv/*
+    */frontend/*
+
+[report]
+precision = 2
+exclude_lines =
+    pragma: no cover
+    def __repr__
+    raise AssertionError
+    raise NotImplementedError
+    if __name__ == .__main__.:
+    if TYPE_CHECKING:
+    @abstractmethod
+    @abc.abstractmethod
+
+[html]
+directory = tests/htmlcov
+
