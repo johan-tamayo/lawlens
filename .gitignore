@@ -31,3 +31,17 @@ Thumbs.db
 
 # Dependency directories
 bower_components/
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+venv/
+env/
+ENV/
+.venv
+*.egg-info/
+dist/
+build/

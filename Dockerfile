@@ -19,4 +19,4 @@ COPY ./app /norm-fullstack/app
 COPY ./docs /norm-fullstack/docs
 
 # Command to run on container start
-CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "80"]
+CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "80", "--reload"]
