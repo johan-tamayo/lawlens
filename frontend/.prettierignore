@@ -1,3 +1,13 @@
 node_modules
-build
 .next
+out
+build
+dist
+*.min.js
+*.min.css
+package-lock.json
+pnpm-lock.yaml
+yarn.lock
+public
+.cache
+coverage

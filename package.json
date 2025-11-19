@@ -1,0 +1,35 @@
+{
+  "name": "norm-takehome-fullstack",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Full-stack application with FastAPI backend and Next.js frontend",
+  "scripts": {
+    "prepare": "husky",
+    "lint": "npm run lint:backend && npm run lint:frontend",
+    "lint:backend": "cd backend && ruff check . && black --check .",
+    "lint:frontend": "cd frontend && npm run lint",
+    "format": "npm run format:backend && npm run format:frontend",
+    "format:backend": "cd backend && black . && ruff check --fix .",
+    "format:frontend": "cd frontend && npm run format",
+    "frontend:dev": "cd frontend && npm run dev",
+    "frontend:build": "cd frontend && npm run build",
+    "frontend:install": "cd frontend && npm install"
+  },
+  "devDependencies": {
+    "husky": "^9.0.11",
+    "lint-staged": "^15.2.0"
+  },
+  "lint-staged": {
+    "*.py": [
+      "bash -c 'source venv/bin/activate 2>/dev/null || true; black \"$@\"' --",
+      "bash -c 'source venv/bin/activate 2>/dev/null || true; ruff check --fix \"$@\"' --"
+    ],
+    "frontend/**/*.{js,jsx,ts,tsx}": [
+      "bash -c 'cd frontend && npx eslint --fix \"${@#frontend/}\"' --",
+      "bash -c 'cd frontend && npx prettier --write \"${@#frontend/}\"' --"
+    ],
+    "frontend/**/*.{json,css,scss,md}": [
+      "bash -c 'cd frontend && npx prettier --write \"${@#frontend/}\"' --"
+    ]
+  }
+}

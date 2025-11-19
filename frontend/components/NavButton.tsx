@@ -1,6 +1,6 @@
-import { Box, Tooltip, Button } from '@chakra-ui/react';
-import Link from 'next/link';
-import { useState } from 'react';
+import { Box, Tooltip, Button } from "@chakra-ui/react";
+import Link from "next/link";
+import { useState } from "react";
 import {
   MdAdd,
   MdBugReport,
@@ -10,30 +10,30 @@ import {
   MdOutlineMenuBook,
   MdDelete,
   MdOutlineNotifications,
-} from 'react-icons/md';
-import { IoArrowRedoOutline } from 'react-icons/io5';
-import { MdModeEdit } from 'react-icons/md';
-import { IoIosSave } from 'react-icons/io';
-import { RiOrganizationChart } from 'react-icons/ri';
-import { HiOutlineDocumentPlus } from 'react-icons/hi2';
-import { AiOutlineAppstoreAdd } from 'react-icons/ai';
-import { BsFileEarmarkPlayFill } from 'react-icons/bs';
+} from "react-icons/md";
+import { IoArrowRedoOutline } from "react-icons/io5";
+import { MdModeEdit } from "react-icons/md";
+import { IoIosSave } from "react-icons/io";
+import { RiOrganizationChart } from "react-icons/ri";
+import { HiOutlineDocumentPlus } from "react-icons/hi2";
+import { AiOutlineAppstoreAdd } from "react-icons/ai";
+import { BsFileEarmarkPlayFill } from "react-icons/bs";
 
 export enum NavIconEnum {
-  HOME = 'HOME',
-  CREATE_PROJECT = 'CREATE_PROJECT',
-  DOWNLOAD = 'DOWNLOAD',
-  DEBUG = 'DEBUG',
-  CLIPBOARD = 'CLIPBOARD',
-  DELETE = 'DELETE',
-  SHARE = 'SHARE',
-  EDIT = 'EDIT',
-  NOTIFICATIONS = 'NOTIFICATIONS',
-  DOCUMENT = 'DOCUMENT',
-  ARTIFACT = 'ARTIFACT',
-  SAVE = 'SAVE',
-  ORGANIZE = 'ORGANIZE',
-  EVAL = 'EVAL',
+  HOME = "HOME",
+  CREATE_PROJECT = "CREATE_PROJECT",
+  DOWNLOAD = "DOWNLOAD",
+  DEBUG = "DEBUG",
+  CLIPBOARD = "CLIPBOARD",
+  DELETE = "DELETE",
+  SHARE = "SHARE",
+  EDIT = "EDIT",
+  NOTIFICATIONS = "NOTIFICATIONS",
+  DOCUMENT = "DOCUMENT",
+  ARTIFACT = "ARTIFACT",
+  SAVE = "SAVE",
+  ORGANIZE = "ORGANIZE",
+  EVAL = "EVAL",
 }
 
 interface NavButtonProps {
@@ -47,7 +47,7 @@ function iconFromEnum(
   navIconEnum: NavIconEnum,
   isHovered: boolean
 ): JSX.Element {
-  const color = isHovered ? '#2800D7' : '#5E6272';
+  const color = isHovered ? "#2800D7" : "#5E6272";
 
   switch (navIconEnum) {
     case NavIconEnum.HOME:
@@ -88,10 +88,10 @@ export default function NavButton({
   navIconEnum,
 }: NavButtonProps): JSX.Element {
   const [isHovered, setIsHovered] = useState(false);
-  const color = isHovered ? '#2800D7' : '#5E6272';
+  const color = isHovered ? "#2800D7" : "#5E6272";
 
   if (linkPath && onClick) {
-    throw new Error('NavButton cannot have both linkPath and onClick');
+    throw new Error("NavButton cannot have both linkPath and onClick");
   }
 
   const linkIcon = (
@@ -110,7 +110,7 @@ export default function NavButton({
         alignItems="center"
         justifyContent="center"
         fill={color}
-        _hover={{ bgColor: '#FFFFFF' }}
+        _hover={{ bgColor: "#FFFFFF" }}
       >
         {iconFromEnum(navIconEnum, isHovered)}
       </Box>

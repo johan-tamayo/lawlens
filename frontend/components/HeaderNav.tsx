@@ -1,6 +1,6 @@
-'use client';
+"use client";
 
-import Link from 'next/link';
+import Link from "next/link";
 import {
   Avatar,
   Box,
@@ -15,11 +15,11 @@ import {
   MenuList,
   Icon,
   Tooltip,
-} from '@chakra-ui/react';
-import { FiChevronDown } from 'react-icons/fi';
-import { useEffect, useState } from 'react';
-import { MdLogout } from 'react-icons/md';
-import NavButton, { NavIconEnum } from './NavButton';
+} from "@chakra-ui/react";
+import { FiChevronDown } from "react-icons/fi";
+import { useEffect, useState } from "react";
+import { MdLogout } from "react-icons/md";
+import NavButton, { NavIconEnum } from "./NavButton";
 
 interface HeaderProps extends FlexProps {
   signOut: () => void;
@@ -30,14 +30,14 @@ export default function HeaderNav({
   ...rest
 }: HeaderProps): React.ReactNode {
   const [isHovered, setIsHovered] = useState(false);
-  const color = isHovered ? '#2800D7' : '#5E6272';
+  const color = isHovered ? "#2800D7" : "#5E6272";
 
   return (
     <Flex
       px={{ base: 4, md: 4 }}
       alignItems="center"
       bg="#FBFBFB"
-      justifyContent={{ base: 'space-between', md: 'flex-end' }}
+      justifyContent={{ base: "space-between", md: "flex-end" }}
       borderBottom="1px"
       borderColor="#DBDCE1"
       {...rest}
@@ -49,7 +49,7 @@ export default function HeaderNav({
             src="/logo.svg"
             alt="Norm Ai Logo"
             height="32px"
-            _active={{ transform: 'scale(.95)' }}
+            _active={{ transform: "scale(.95)" }}
           />
         </Link>
         <Box height="32px" width="1px" bg="#DBDCE1" mx={3} />
@@ -63,7 +63,7 @@ export default function HeaderNav({
         </Text>
       </Flex>
       <HStack>
-        <Flex alignItems={'center'}>
+        <Flex alignItems={"center"}>
           <Menu>
             <HStack>
               <HStack spacing="16px">
@@ -87,28 +87,28 @@ export default function HeaderNav({
               <MenuButton
                 py={2}
                 transition="all 0.3s"
-                _focus={{ boxShadow: 'none' }}
+                _focus={{ boxShadow: "none" }}
                 flexGrow={1}
                 width="auto"
                 onMouseDown={(e: React.MouseEvent) =>
                   ((e.currentTarget as HTMLElement).style.transform =
-                    'scale(.95)')
+                    "scale(.95)")
                 }
                 onMouseUp={(e: React.MouseEvent) =>
                   ((e.currentTarget as HTMLElement).style.transform =
-                    'scale(1)')
+                    "scale(1)")
                 }
                 onMouseLeave={(e: React.MouseEvent) =>
                   ((e.currentTarget as HTMLElement).style.transform =
-                    'scale(1)')
+                    "scale(1)")
                 }
               >
                 <HStack>
-                  <Avatar size={'sm'} name="Tyrion Lannister" boxSize="32px" />
+                  <Avatar size={"sm"} name="Tyrion Lannister" boxSize="32px" />
                   <Text whiteSpace="nowrap" width="auto" fontSize="sm">
                     Tyrion Lannister
                   </Text>
-                  <Box display={{ base: 'none', md: 'flex' }}>
+                  <Box display={{ base: "none", md: "flex" }}>
                     <FiChevronDown />
                   </Box>
                 </HStack>
@@ -116,10 +116,10 @@ export default function HeaderNav({
             </HStack>
             <MenuList bg="white" borderColor="#DBDCE1" zIndex={100}>
               <MenuItem
-                color={'#32343C'}
-                _hover={{ bg: '#EEEBFF', color: '#2800D7' }}
-                _focus={{ bg: '#EEEBFF', color: '#2800D7' }}
-                _active={{ bg: '#EEEBFF', color: '#2800D7' }}
+                color={"#32343C"}
+                _hover={{ bg: "#EEEBFF", color: "#2800D7" }}
+                _focus={{ bg: "#EEEBFF", color: "#2800D7" }}
+                _active={{ bg: "#EEEBFF", color: "#2800D7" }}
                 onClick={signOut}
               >
                 <Box
@@ -128,7 +128,7 @@ export default function HeaderNav({
                   justifyContent="center"
                   alignItems="center"
                 >
-                  <Icon as={MdLogout} width={'20px'} height={'20px'} />
+                  <Icon as={MdLogout} width={"20px"} height={"20px"} />
                 </Box>
                 Sign out
               </MenuItem>
@@ -151,7 +151,7 @@ export default function HeaderNav({
                   alignItems="center"
                   justifyContent="center"
                   fill={color}
-                  _hover={{ bgColor: '#FFFFFF' }}
+                  _hover={{ bgColor: "#FFFFFF" }}
                 >
                   <svg
                     width="20"

@@ -1,5 +1,4 @@
-from fastapi import FastAPI, Query
-from app.utils import Output
+from fastapi import FastAPI
 
 app = FastAPI()
 
