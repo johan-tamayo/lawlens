@@ -193,7 +193,7 @@ export default function Page() {
       <Box borderTop="1px solid" borderColor="gray.200" py={8} bg="gray.50">
         <Container maxW="6xl">
           <Text textAlign="center" color="gray.600" fontSize="sm">
-            Westeros Legal Documents System • Powered by Norm.AI
+            Westeros Legal Documents System • Powered by Johan Tamayo
           </Text>
         </Container>
       </Box>

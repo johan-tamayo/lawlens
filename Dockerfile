@@ -2,7 +2,7 @@
 FROM python:3.11-slim
 
 # Set the working directory inside the container
-WORKDIR /norm-fullstack
+WORKDIR /fullstack
 
 # Copy the dependencies file to the working directory
 COPY requirements.txt .
@@ -14,8 +14,8 @@ RUN pip install --no-cache-dir --upgrade -r requirements.txt
 ENV OPENAI_API_KEY=$OPENAI_API_KEY
 
 # Copy the application code and documents
-COPY ./app /norm-fullstack/app
-COPY ./docs /norm-fullstack/docs
+COPY ./app /fullstack/app
+COPY ./docs /fullstack/docs
 
 # Command to run on container start
 CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "80", "--reload"]

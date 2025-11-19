@@ -14,7 +14,7 @@ describe("HeaderNav", () => {
     const signOut = jest.fn();
     render(<HeaderNav signOut={signOut} />);
 
-    const logo = screen.getByAltText("Norm Ai Logo");
+    const logo = screen.getByAltText("Logo");
     expect(logo).toBeInTheDocument();
     expect(logo).toHaveAttribute("src", "/logo.svg");
   });

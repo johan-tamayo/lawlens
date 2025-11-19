@@ -1,227 +1,240 @@
-# Norm.ai Full-Stack Take-Home Project
+# LawLens
 
-This repository contains a full-stack application with a FastAPI backend and Next.js frontend. The backend provides an AI-powered service to query laws from Game of Thrones using RAG (Retrieval-Augmented Generation).
+## 1. Description
 
-## Quick Start
+This is a full-stack application that provides an AI-powered service to query legal documents using RAG (Retrieval-Augmented Generation). The application allows users to search through legal documents (specifically Game of Thrones laws) and receive AI-generated responses with proper citations to the source material.
 
-### Prerequisites
+### 1.1. Key Features
 
-- Python 3.11+
-- Node.js 18+ and npm
-- Docker and Docker Compose
-- OpenAI API Key
+- **Document Querying**: Query legal documents using natural language questions
+- **Conversation Management**: Create and manage multiple conversation threads with context-aware responses
+- **Citation Support**: All responses include citations pointing to the relevant sections of the source documents
+- **Document Browsing**: View and navigate through the document structure in a tree-like interface
+- **RAG-Powered Search**: Uses vector embeddings and semantic search to find relevant document sections
+- **Multi-turn Conversations**: Maintains conversation history for context-aware follow-up questions
 
-### Setup
+The backend uses FastAPI to serve a REST API, while the frontend is built with Next.js providing a modern, responsive user interface. The system leverages LlamaIndex for RAG implementation, Qdrant for vector storage, and OpenAI for embeddings and language model inference.
 
-1. **Clone and navigate to the repository**
+## 2. Prerequisites
 
-```bash
-cd norm-takehome-fullstack
-```
+Before you begin, ensure you have the following installed on your system:
 
-2. **Set up environment variables**
+- **Python 3.11+**: Required for the FastAPI backend
+- **Node.js 18+**: Required for the Next.js frontend
+- **pnpm**: Package manager for the frontend (install via `npm install -g pnpm`)
+- **Docker & Docker Compose** (Optional): For containerized deployment
+- **OpenAI API Key**: Required for embeddings and LLM inference. You can obtain one from [OpenAI](https://platform.openai.com/)
 
-```bash
-# Copy the example environment file
-cp .env.example .env
+### 2.1. Environment Setup
 
-# Edit .env and add your OpenAI API key
-# OPENAI_API_KEY=your_actual_openai_api_key
-```
+- Create a `.env` file in the root directory with the following:
 
-3. **Option A: Run with Docker (Recommended)**
+  ```env
+  OPENAI_API_KEY=your_openai_api_key_here
+  ```
 
-**Production Mode:**
+- Ensure the legal documents PDF is located at `docs/laws.pdf`
+- Ensure Docker and Docker Compose are installed on your system
+- Run `docker compose up --build` from the root directory to start both the frontend and backend services
 
-```bash
-docker-compose up --build
-```
+## 3. Architecture
 
-This will start both backend and frontend services:
+The application follows a clean architecture pattern with clear separation of concerns. Below is the project folder structure:
 
-- Backend API: http://localhost:8000
-- API Documentation: http://localhost:8000/docs
-- Frontend: http://localhost:3000
-
-**Development Mode (with hot reload):**
-
-```bash
-docker-compose -f docker-compose.dev.yml up --build
-```
-
-This provides:
-
-- Backend with hot reload on code changes
-- Frontend with hot reload on code changes
-- Better development experience with faster builds
-
-4. **Option B: Run Locally (Without Docker)**
-
-**Backend:**
-
-```bash
-# Create and activate virtual environment
-python3 -m venv venv
-source venv/bin/activate  # On Windows: venv\Scripts\activate
-
-# Install dependencies
-pip install -r requirements.txt
-
-# Run the server
-uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
-```
-
-**Frontend:**
-
-```bash
-cd frontend
-
-# Install dependencies
-npx pnpm install
-
-# Run development server
-npm run dev
-```
-
-- Frontend: http://localhost:3000
-
-## Development Tools
-
-This project includes automated linting and formatting tools:
-
-### Python (Backend)
-
-- **Black**: Code formatter
-- **Ruff**: Fast Python linter
-- **MyPy**: Static type checker
-
-### JavaScript/TypeScript (Frontend)
-
-- **ESLint**: Linter for Next.js
-- **Prettier**: Code formatter
-
-### Pre-commit Hooks (Husky)
-
-Git hooks are configured to automatically lint and format code before each commit:
-
-- Python files are formatted with Black and linted with Ruff
-- Frontend files are linted with ESLint and formatted with Prettier
-
-### Commands
-
-```bash
-# Lint all code
-npm run lint
-
-# Format all code
-npm run format
-
-# Backend only
-npm run lint:backend
-npm run format:backend
-
-# Frontend only
-npm run lint:frontend
-npm run format:frontend
-```
-
-## Project Structure
+### 3.1. Project Folder Structure
 
 ```
-norm-takehome-fullstack/
-├── app/                       # FastAPI backend application
-│   ├── main.py               # Main FastAPI application
-│   ├── api/                  # API routes
-│   ├── core/                 # Core functionality
-│   ├── models/               # Data models
-│   ├── services/             # Business logic
-│   └── tests/                # Backend tests (82% coverage)
-├── frontend/                 # Next.js frontend application
-│   ├── app/                  # Next.js app directory
-│   ├── lib/                  # Utilities and API client
-│   ├── e2e/                  # E2E tests (Playwright)
-│   ├── __tests__/            # Unit tests (Jest)
-│   ├── Dockerfile            # Production frontend image
-│   └── Dockerfile.dev        # Development frontend image
-├── docs/                     # Documentation and reference files
-│   └── laws.pdf             # Game of Thrones laws dataset
-├── .husky/                  # Git hooks configuration
-├── pyproject.toml           # Python tool configuration
-├── requirements.txt         # Python dependencies
-├── docker-compose.yml       # Production Docker services
-├── docker-compose.dev.yml   # Development Docker services
-└── Dockerfile              # Backend Docker image
+LawLens/
+├── app/                                 # Backend FastAPI application
+│   ├── api/                             # API layer
+│   │   ├── routes/                      # API route handlers
+│   │   │   ├── conversations.py
+│   │   │   ├── documents.py
+│   │   │   ├── health.py
+│   │   │   └── query.py
+│   │   ├── deps.py
+│   │   └── __init__.py
+│   ├── config.py                        # Application configuration
+│   ├── core/                            # Core application logic
+│   │   ├── lifespan.py                  # Application lifecycle management
+│   │   └── __init__.py
+│   ├── main.py                          # FastAPI application entry point
+│   ├── models/                          # Data models and schemas (Pydantic)
+│   │   ├── schemas.py
+│   │   └── __init__.py
+│   ├── services/                        # Business logic layer
+│   │   ├── conversation_service.py      # Conversation management
+│   │   ├── document_service.py          # PDF processing
+│   │   ├── document_storage_service.py  # Document metadata storage
+│   │   ├── qdrant_service.py            # Vector store operations
+│   │   └── __init__.py
+│   ├── tests/
+│   │   ├── unit/                        # Backend Unit Testing Files
+│   │   │   ├── api/
+│   │   │   ├── models/
+│   │   │   └── services/
+│   │   ├── conftest.py                  # Pytest configuration
+│   │   └── __init__.py
+│   └── pytest.ini                       # Pytest configuration
+│
+├── frontend/                            # Next.js frontend application
+│   ├── app/                             # Next.js App Router
+│   │   ├── _components/                 # Components for Layout Setup
+│   │   │   ├── HeaderNav.tsx
+│   │   │   ├── HeaderNavWrapper.tsx
+│   │   │   └── NavButton.tsx
+│   │   ├── conversations/               # Conversations Page
+│   │   │   ├── _components/
+│   │   │   │   ├── ChatInterface.tsx
+│   │   │   │   ├── ConversationList.tsx
+│   │   │   │   ├── EmptyConversationState.tsx
+│   │   │   │   └── MessageBubble.tsx
+│   │   │   ├── [id]/
+│   │   │   │   └── page.tsx
+│   │   │   ├── layout.tsx
+│   │   │   └── page.tsx
+│   │   ├── documents/                   # Documents Page
+│   │   │   ├── _components/
+│   │   │   │   ├── DocumentContent.tsx
+│   │   │   │   ├── DocumentTree.tsx
+│   │   │   │   └── TreeSection.tsx
+│   │   │   ├── [id]/
+│   │   │   │   └── page.tsx
+│   │   │   ├── layout.tsx
+│   │   │   └── page.tsx
+│   │   ├── globals.css                  # Global styles
+│   │   ├── layout.tsx                   # Root layout
+│   │   └── page.tsx                     # Landing page
+│   ├── lib/
+│   │   ├── api/                         # API Integration
+│   │   │   ├── client.ts
+│   │   │   ├── conversation-types.ts
+│   │   │   ├── hooks.ts
+│   │   │   ├── schema.ts
+│   │   │   └── index.ts
+│   │   ├── query/                       # React Query setup
+│   │   │   └── provider.tsx
+│   │   └── index.ts
+│   ├── __tests__/                       # Frontend test utilities
+│   │   ├── mocks/                       # Test mocks
+│   │   └── test-utils.tsx               # Testing utilities
+│   ├── e2e/                             # End-to-end tests
+│   │   ├── documents.spec.ts            # E2E testing for Documents pages
+│   │   └── fixtures.ts                  # Test fixtures
+│   ├── public/                          # Static assets
+│   │   └── logo.svg
+│   ├── Dockerfile                       # Frontend Docker image
+│   ├── jest.config.js                   # Jest configuration
+│   ├── jest.setup.js                    # Jest setup
+│   ├── next.config.mjs                  # Next.js configuration
+│   ├── package.json                     # Frontend dependencies
+│   ├── playwright.config.ts             # Playwright configuration
+│   ├── postcss.config.mjs
+│   ├── tailwind.config.ts
+│   ├── tsconfig.json
+│   └── README.md
+│
+├── docs/
+│   └── laws.pdf
+│
+├── docker-compose.yml                   # Docker Compose configuration
+├── Dockerfile                           # Backend Docker image
+├── package.json                         # Root package.json (scripts)
+├── pyproject.toml                       # Python project configuration
+├── requirements.txt                     # Python dependencies
+├── pnpm-lock.yaml
+└── README.md
 ```
 
-## API Endpoints
+### 3.2. Data Flow
 
-### Query Laws
+1. **Document Loading**: On startup, the backend loads PDF documents, processes them into sections, and stores them in Qdrant vector store
+2. **Query Processing**: User queries are converted to embeddings and matched against document vectors
+3. **RAG Generation**: Relevant document sections are retrieved and used as context for the LLM to generate responses
+4. **Citation Extraction**: Source sections are extracted and included in the response
+5. **Conversation Management**: Conversation history is maintained in-memory for multi-turn dialogues
 
-**Endpoint:** `GET /query`
+### 3.3. Service Layer
 
-**Parameters:**
+- **QdrantService**: Manages vector store operations, query execution, and citation extraction
+- **DocumentService**: Handles PDF parsing, text extraction, and document structuring
+- **DocumentStorageService**: Stores and retrieves document metadata
+- **ConversationService**: Manages conversation state, message history, and conversation CRUD operations
 
-- `q` (query string): The question to ask about the laws
+## 4. Tech Stack
 
-**Example:**
+### 4.1. Backend
 
-```bash
-curl "http://localhost:8000/query?q=what+happens+if+I+steal+from+the+Sept"
-```
+- **Framework**: [FastAPI](https://fastapi.tiangolo.com/) - Modern, fast web framework for building APIs
+- **Language**: Python 3.11+
+- **RAG Framework**: [LlamaIndex](https://www.llamaindex.ai/) - Data framework for LLM applications
+- **Vector Store**: [Qdrant](https://qdrant.tech/) - Vector similarity search engine (in-memory)
+- **LLM & Embeddings**: [OpenAI API](https://platform.openai.com/) - GPT-4 for LLM, OpenAI embeddings
+- **PDF Processing**: [PyPDF](https://pypdf.readthedocs.io/) - PDF text extraction
+- **Validation**: [Pydantic](https://docs.pydantic.dev/) - Data validation using Python type annotations
+- **Server**: [Uvicorn](https://www.uvicorn.org/) - ASGI server implementation
+- **Configuration**: [pydantic-settings](https://docs.pydantic.dev/latest/usage/settings/) - Settings management
 
-**Response:**
+### 4.2. Frontend
 
-```json
-{
-  "query": "what happens if I steal from the Sept?",
-  "response": "...",
-  "sources": [...]
-}
-```
+- **Framework**: [Next.js 14](https://nextjs.org/) - React framework with App Router
+- **Language**: [TypeScript](https://www.typescriptlang.org/) - Typed JavaScript
+- **UI Library**: [React 18](https://react.dev/) - UI component library
+- **Styling**:
+  - [Tailwind CSS](https://tailwindcss.com/) - Utility-first CSS framework
+  - [Chakra UI](https://chakra-ui.com/) - Component library
+- **State Management**: [TanStack Query (React Query)](https://tanstack.com/query) - Server state management
+- **API Client**: [openapi-fetch](https://openapi-ts.pages.dev/openapi-fetch/) - Type-safe API client
+- **Icons**: [React Icons](https://react-icons.github.io/react-icons/) - Icon library
+- **Date Handling**: [date-fns](https://date-fns.org/) - Date utility library
 
-## Documentation
+### 4.3. Development Tools
 
-For detailed setup instructions, troubleshooting, and development guidelines, see [SETUP.md](./SETUP.md).
+- **Linting & Formatting**:
+  - [Ruff](https://docs.astral.sh/ruff/) - Fast Python linter and formatter
+  - [Black](https://black.readthedocs.io/) - Python code formatter
+  - [ESLint](https://eslint.org/) - JavaScript/TypeScript linter
+  - [Prettier](https://prettier.io/) - Code formatter
+- **Type Checking**: [MyPy](https://mypy.readthedocs.io/) - Static type checker for Python
+- **Testing**:
+  - [Pytest](https://pytest.org/) - Python testing framework
+  - [Jest](https://jestjs.io/) - JavaScript testing framework
+  - [Playwright](https://playwright.dev/) - End-to-end testing
+  - [Testing Library](https://testing-library.com/) - React component testing
+- **API Documentation**: FastAPI auto-generates OpenAPI/Swagger documentation
 
-## Technology Stack
+### 4.4. Infrastructure
 
-### Backend
+- **Containerization**: [Docker](https://www.docker.com/) & [Docker Compose](https://docs.docker.com/compose/)
+- **Package Management**:
+  - Python: `requirements.txt` with pip
+  - Frontend: `pnpm` (faster, disk-efficient package manager)
 
-- **FastAPI**: Modern Python web framework
-- **LlamaIndex**: RAG framework for document indexing and querying
-- **OpenAI**: LLM for generating responses
-- **Qdrant**: Vector database for similarity search
-- **PyPDF**: PDF processing
-- **Uvicorn**: ASGI server
+## 5. Challenges
 
-### Frontend
+### 5.1. Extracting the documents from the PDFs
 
-- **Next.js 14**: React framework
-- **TypeScript**: Type-safe JavaScript
-- **Chakra UI**: Component library
-- **Tailwind CSS**: Utility-first CSS framework
-- **Framer Motion**: Animation library
+Extracting the document content from the given PDF was done using the PyPDF package. The main challenges were maintaining the original layout and improving the accuracy of extracted text to enhance the quality of the RAG pipeline responses.
 
-### Development Tools
+- Extracted the text using PyPDF (should use layout flag to read the text keeping the original layout)
+- Added/removed spaces to the necessary places.
+- Passed down the document contents one by one into the OpenAI to fix the issues that are made by OCR processes.
 
-- **Black & Ruff**: Python formatting and linting
-- **ESLint & Prettier**: JavaScript/TypeScript linting and formatting
-- **Husky**: Git hooks
-- **Lint-staged**: Run linters on staged files
-- **Docker**: Containerization
+### 5.2. Implementing RAG-Powered Search
 
-## Contributing
+The original QdrantService implementation in the codebase was insufficient to make the RAG pipeline work effectively. To resolve this issue, we enhanced the service by incorporating previous chat context into the vector data during conversations and properly configuring conversation history management.
 
-1. Make sure all linting tools are installed (`npm install`)
-2. Create a feature branch
-3. Make your changes (pre-commit hooks will auto-format)
-4. Test your changes locally
-5. Submit a pull request
+## 6. Future Improvements
 
-## License
+### 6.1. Backend
 
-This is a take-home project for Norm.ai.
+- Set up authentication and user management
+- Implement rate limiting
+- Set up a message queue to handle GET /query requests to support multiple conversation threads simultaneously
+- Migrate conversation history from in-memory storage to a persistent database (PostgreSQL) to prevent data loss on application restart
+- Set up SQLAlchemy as an ORM to integrate with the database
 
-## Support
+### 6.2. Frontend
 
-For issues or questions, please refer to the [SETUP.md](./SETUP.md) troubleshooting section.
+- Build authentication-related pages
+- If required, implement workspace management and role-based access control

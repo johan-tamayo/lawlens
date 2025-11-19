@@ -47,7 +47,7 @@ export default function HeaderNav({
           <Box
             as={Image}
             src="/logo.svg"
-            alt="Norm Ai Logo"
+            alt="Logo"
             height="32px"
             _active={{ transform: "scale(.95)" }}
           />

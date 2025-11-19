@@ -1,8 +1,8 @@
 {
-  "name": "norm-takehome-fullstack",
+  "name": "law-lens",
   "version": "1.0.0",
   "private": true,
-  "description": "Full-stack application with FastAPI backend and Next.js frontend",
+  "description": "RAG based legal expert traied on the given context",
   "scripts": {
     "prepare": "husky",
     "lint": "npm run lint:backend && npm run lint:frontend",

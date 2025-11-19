@@ -8,8 +8,8 @@ import HeaderNavWrapper from "./_components/HeaderNavWrapper";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "Norm Ai Takehome",
-  description: "Full-Stack take home exercise for Norm Ai.",
+  title: "LawLens",
+  description: "RAG based legal expert traied on the given context",
 };
 
 export default function RootLayout({
