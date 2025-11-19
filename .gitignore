@@ -54,3 +54,9 @@ app/tests/.coverage
 .coverage
 htmlcov/
 coverage.xml
+frontend/coverage/
+
+# Playwright
+frontend/test-results/
+frontend/playwright-report/
+frontend/playwright/.cache/
