@@ -7,10 +7,18 @@
 import {
   useQuery,
   useMutation,
+  useQueryClient,
   type UseQueryOptions,
 } from "@tanstack/react-query";
 import { apiClient } from "./client";
 import type { paths } from "./schema";
+import type {
+  Conversation,
+  ConversationListResponse,
+  CreateConversationRequest,
+  Message,
+  SendMessageRequest,
+} from "./conversation-types";
 
 /**
  * Type definitions for API responses
@@ -35,6 +43,8 @@ export const queryKeys = {
   document: (id: string) => ["documents", id] as const,
   documentBySection: (section: string) =>
     ["documents", "section", section] as const,
+  conversations: ["conversations"] as const,
+  conversation: (id: string) => ["conversations", id] as const,
 };
 
 /**
@@ -194,5 +204,185 @@ export function useDocumentBySection(
     },
     enabled: !!sectionNumber,
     ...options,
+  });
+}
+
+/**
+ * Conversation Hooks
+ */
+
+/**
+ * useConversations Hook
+ *
+ * Fetches all conversations sorted by most recently updated.
+ *
+ * @param options - Additional React Query options
+ * @returns Query result with all conversations
+ */
+export function useConversations(
+  options?: Omit<
+    UseQueryOptions<ConversationListResponse>,
+    "queryKey" | "queryFn"
+  >
+) {
+  return useQuery<ConversationListResponse>({
+    queryKey: queryKeys.conversations,
+    queryFn: async () => {
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000"}/conversations`
+      );
+
+      if (!response.ok) {
+        throw new Error("Failed to fetch conversations");
+      }
+
+      return response.json();
+    },
+    ...options,
+  });
+}
+
+/**
+ * useConversation Hook
+ *
+ * Fetches a specific conversation by ID.
+ *
+ * @param conversationId - The conversation ID
+ * @param options - Additional React Query options
+ * @returns Query result with conversation details
+ */
+export function useConversation(
+  conversationId: string | undefined,
+  options?: Omit<UseQueryOptions<Conversation>, "queryKey" | "queryFn">
+) {
+  return useQuery<Conversation>({
+    queryKey: queryKeys.conversation(conversationId || ""),
+    queryFn: async () => {
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000"}/conversations/${conversationId}`
+      );
+
+      if (!response.ok) {
+        throw new Error("Failed to fetch conversation");
+      }
+
+      return response.json();
+    },
+    enabled: !!conversationId,
+    ...options,
+  });
+}
+
+/**
+ * useCreateConversation Hook
+ *
+ * Creates a new conversation.
+ *
+ * @returns Mutation result
+ */
+export function useCreateConversation() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (request: CreateConversationRequest = {}) => {
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000"}/conversations`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(request),
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error("Failed to create conversation");
+      }
+
+      return response.json() as Promise<Conversation>;
+    },
+    onSuccess: () => {
+      // Invalidate conversations list to refetch
+      queryClient.invalidateQueries({ queryKey: queryKeys.conversations });
+    },
+  });
+}
+
+/**
+ * useSendMessage Hook
+ *
+ * Sends a message in a conversation and gets AI response.
+ *
+ * @returns Mutation result
+ */
+export function useSendMessage() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async ({
+      conversationId,
+      message,
+    }: {
+      conversationId: string;
+      message: string;
+    }) => {
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000"}/conversations/${conversationId}/messages`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ message }),
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error("Failed to send message");
+      }
+
+      return response.json() as Promise<Message>;
+    },
+    onSuccess: (_, variables) => {
+      // Invalidate the specific conversation to refetch
+      queryClient.invalidateQueries({
+        queryKey: queryKeys.conversation(variables.conversationId),
+      });
+      // Also invalidate conversations list to update timestamps
+      queryClient.invalidateQueries({ queryKey: queryKeys.conversations });
+    },
+  });
+}
+
+/**
+ * useDeleteConversation Hook
+ *
+ * Deletes a conversation.
+ *
+ * @returns Mutation result
+ */
+export function useDeleteConversation() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (conversationId: string) => {
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000"}/conversations/${conversationId}`,
+        {
+          method: "DELETE",
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error("Failed to delete conversation");
+      }
+
+      return response.json();
+    },
+    onSuccess: () => {
+      // Invalidate conversations list to refetch
+      queryClient.invalidateQueries({ queryKey: queryKeys.conversations });
+    },
   });
 }

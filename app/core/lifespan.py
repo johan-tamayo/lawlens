@@ -4,9 +4,18 @@ from contextlib import asynccontextmanager
 
 from fastapi import FastAPI
 
-from app.api.deps import set_document_storage_service, set_qdrant_service
+from app.api.deps import (
+    set_conversation_service,
+    set_document_storage_service,
+    set_qdrant_service,
+)
 from app.config import settings
-from app.services import DocumentService, DocumentStorageService, QdrantService
+from app.services import (
+    ConversationService,
+    DocumentService,
+    DocumentStorageService,
+    QdrantService,
+)
 
 
 @asynccontextmanager
@@ -39,6 +48,11 @@ async def lifespan(app: FastAPI):
     # Set global service instance for dependency injection
     set_qdrant_service(qdrant_service)
     print("✅ Services ready!")
+
+    # Initialize conversation service
+    conversation_service = ConversationService()
+    set_conversation_service(conversation_service)
+    print("💬 ConversationService initialized")
 
     yield
 

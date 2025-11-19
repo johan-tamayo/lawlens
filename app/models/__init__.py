@@ -2,18 +2,28 @@
 
 from app.models.schemas import (
     Citation,
+    Conversation,
+    ConversationListResponse,
+    CreateConversationRequest,
     DocumentDetail,
     DocumentListResponse,
     DocumentMetadata,
     DocumentSummary,
+    Message,
     Output,
+    SendMessageRequest,
 )
 
 __all__ = [
     "Citation",
-    "Output",
-    "DocumentMetadata",
+    "Conversation",
+    "ConversationListResponse",
+    "CreateConversationRequest",
     "DocumentDetail",
-    "DocumentSummary",
     "DocumentListResponse",
+    "DocumentMetadata",
+    "DocumentSummary",
+    "Message",
+    "Output",
+    "SendMessageRequest",
 ]

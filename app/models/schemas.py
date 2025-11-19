@@ -1,6 +1,13 @@
 """Pydantic models for API request/response schemas."""
 
-from pydantic import BaseModel
+from datetime import UTC, datetime
+
+from pydantic import BaseModel, Field
+
+
+def utc_now() -> datetime:
+    """Return current UTC time with timezone info."""
+    return datetime.now(UTC)
 
 
 class Citation(BaseModel):
@@ -16,6 +23,44 @@ class Output(BaseModel):
     query: str
     response: str
     citations: list[Citation]
+
+
+class Message(BaseModel):
+    """Chat message model."""
+
+    role: str  # 'user' or 'assistant'
+    content: str
+    citations: list[Citation] = []
+    timestamp: datetime = Field(default_factory=utc_now)
+
+
+class CreateConversationRequest(BaseModel):
+    """Request to create a new conversation."""
+
+    title: str = "New Conversation"
+
+
+class SendMessageRequest(BaseModel):
+    """Request to send a message in a conversation."""
+
+    message: str
+
+
+class Conversation(BaseModel):
+    """Conversation model."""
+
+    id: str
+    title: str
+    messages: list[Message] = []
+    created_at: datetime = Field(default_factory=utc_now)
+    updated_at: datetime = Field(default_factory=utc_now)
+
+
+class ConversationListResponse(BaseModel):
+    """Response model for conversation list endpoint."""
+
+    total: int
+    conversations: list[Conversation]
 
 
 class DocumentMetadata(BaseModel):

@@ -1,5 +1,7 @@
 """Unit tests for Pydantic schemas."""
 
+from datetime import UTC, datetime
+
 import pytest
 from pydantic import ValidationError
 
@@ -232,3 +234,216 @@ class TestDocumentModels:
         json_str = detail.model_dump_json()
         assert "Test 1.1" in json_str
         assert "Text" in json_str
+
+
+class TestConversationModels:
+    """Tests for Conversation-related models."""
+
+    def test_message_creation(self):
+        """Test Message creation."""
+        from app.models import Message
+
+        message = Message(
+            role="user",
+            content="Test message",
+            citations=[],
+            timestamp=datetime.now(UTC),
+        )
+
+        assert message.role == "user"
+        assert message.content == "Test message"
+        assert message.citations == []
+        assert isinstance(message.timestamp, datetime)
+
+    def test_message_with_citations(self):
+        """Test Message with citations."""
+        from app.models import Message
+
+        citations = [Citation(source="S1", text="T1")]
+        message = Message(
+            role="assistant",
+            content="Response",
+            citations=citations,
+            timestamp=datetime.now(UTC),
+        )
+
+        assert len(message.citations) == 1
+        assert message.citations[0].source == "S1"
+
+    def test_message_default_timestamp(self):
+        """Test Message default timestamp creation."""
+        from app.models import Message
+
+        message = Message(role="user", content="Test")
+
+        assert isinstance(message.timestamp, datetime)
+        assert message.timestamp.tzinfo is not None  # Should have timezone
+
+    def test_message_serialization(self):
+        """Test Message serialization."""
+        from app.models import Message
+
+        message = Message(
+            role="user",
+            content="Test",
+            citations=[],
+            timestamp=datetime.now(UTC),
+        )
+
+        data = message.model_dump()
+        assert data["role"] == "user"
+        assert data["content"] == "Test"
+        assert data["citations"] == []
+
+    def test_conversation_creation(self):
+        """Test Conversation creation."""
+        from app.models import Conversation
+
+        conv = Conversation(
+            id="test-id",
+            title="Test Conversation",
+            messages=[],
+            created_at=datetime.now(UTC),
+            updated_at=datetime.now(UTC),
+        )
+
+        assert conv.id == "test-id"
+        assert conv.title == "Test Conversation"
+        assert conv.messages == []
+        assert isinstance(conv.created_at, datetime)
+        assert isinstance(conv.updated_at, datetime)
+
+    def test_conversation_with_messages(self):
+        """Test Conversation with messages."""
+        from app.models import Conversation, Message
+
+        messages = [
+            Message(role="user", content="Q1"),
+            Message(role="assistant", content="A1"),
+        ]
+
+        conv = Conversation(
+            id="test-id",
+            title="Test",
+            messages=messages,
+            created_at=datetime.now(UTC),
+            updated_at=datetime.now(UTC),
+        )
+
+        assert len(conv.messages) == 2
+        assert conv.messages[0].role == "user"
+        assert conv.messages[1].role == "assistant"
+
+    def test_conversation_default_timestamps(self):
+        """Test Conversation default timestamp creation."""
+        from app.models import Conversation
+
+        conv = Conversation(id="test-id", title="Test")
+
+        assert isinstance(conv.created_at, datetime)
+        assert isinstance(conv.updated_at, datetime)
+        assert conv.created_at.tzinfo is not None
+
+    def test_conversation_serialization(self):
+        """Test Conversation serialization."""
+        from app.models import Conversation
+
+        conv = Conversation(
+            id="test-id",
+            title="Test",
+            messages=[],
+            created_at=datetime.now(UTC),
+            updated_at=datetime.now(UTC),
+        )
+
+        data = conv.model_dump()
+        assert data["id"] == "test-id"
+        assert data["title"] == "Test"
+        assert data["messages"] == []
+
+    def test_create_conversation_request(self):
+        """Test CreateConversationRequest."""
+        from app.models import CreateConversationRequest
+
+        request = CreateConversationRequest(title="Custom Title")
+        assert request.title == "Custom Title"
+
+    def test_create_conversation_request_default(self):
+        """Test CreateConversationRequest default title."""
+        from app.models import CreateConversationRequest
+
+        request = CreateConversationRequest()
+        assert request.title == "New Conversation"
+
+    def test_send_message_request(self):
+        """Test SendMessageRequest."""
+        from app.models import SendMessageRequest
+
+        request = SendMessageRequest(message="Test message")
+        assert request.message == "Test message"
+
+    def test_send_message_request_validation(self):
+        """Test SendMessageRequest validation."""
+        from app.models import SendMessageRequest
+
+        with pytest.raises(ValidationError):
+            SendMessageRequest()  # Missing message field
+
+    def test_conversation_list_response(self):
+        """Test ConversationListResponse."""
+        from app.models import Conversation, ConversationListResponse
+
+        conversations = [
+            Conversation(id="1", title="First"),
+            Conversation(id="2", title="Second"),
+        ]
+
+        response = ConversationListResponse(
+            total=2,
+            conversations=conversations,
+        )
+
+        assert response.total == 2
+        assert len(response.conversations) == 2
+        assert response.conversations[0].id == "1"
+
+    def test_conversation_list_response_empty(self):
+        """Test ConversationListResponse with no conversations."""
+        from app.models import ConversationListResponse
+
+        response = ConversationListResponse(total=0, conversations=[])
+        assert response.total == 0
+        assert response.conversations == []
+
+    def test_conversation_json_serialization(self):
+        """Test full conversation serialization to JSON."""
+        from app.models import Conversation, Message
+
+        messages = [
+            Message(
+                role="user",
+                content="Question",
+                citations=[],
+                timestamp=datetime.now(UTC),
+            ),
+            Message(
+                role="assistant",
+                content="Answer",
+                citations=[Citation(source="S1", text="T1")],
+                timestamp=datetime.now(UTC),
+            ),
+        ]
+
+        conv = Conversation(
+            id="test-id",
+            title="Test",
+            messages=messages,
+            created_at=datetime.now(UTC),
+            updated_at=datetime.now(UTC),
+        )
+
+        json_str = conv.model_dump_json()
+        assert "test-id" in json_str
+        assert "Question" in json_str
+        assert "Answer" in json_str
+        assert "S1" in json_str
