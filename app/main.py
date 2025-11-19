@@ -1,8 +1,19 @@
+"""FastAPI application entry point."""
+
 from fastapi import FastAPI
 
-app = FastAPI()
+from app.api.routes import health, query
+from app.config import settings
+from app.core.lifespan import lifespan
 
-"""
-Please create an endpoint that accepts a query string, e.g., "what happens if I steal 
-from the Sept?" and returns a JSON response serialized from the Pydantic Output class.
-"""
+# Create FastAPI application
+app = FastAPI(
+    title=settings.app_name,
+    description=settings.app_description,
+    version=settings.app_version,
+    lifespan=lifespan,
+)
+
+# Include routers
+app.include_router(query.router)
+app.include_router(health.router)

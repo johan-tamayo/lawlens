@@ -9,12 +9,11 @@ COPY requirements.txt .
 
 # Install any dependencies
 RUN pip install --no-cache-dir --upgrade -r requirements.txt
-RUN pip install uvicorn
 
 # API key
 ENV OPENAI_API_KEY=$OPENAI_API_KEY
 
-# Copy the content of the local src directory to the working directory
+# Copy the application code and documents
 COPY ./app /norm-fullstack/app
 COPY ./docs /norm-fullstack/docs
 
