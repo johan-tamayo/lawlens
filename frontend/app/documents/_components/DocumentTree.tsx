@@ -110,15 +110,16 @@ export default function DocumentTree({
   if (isLoading) {
     return (
       <Box
-        h="100%"
+        h="full"
         display="flex"
         flexDirection="column"
         alignItems="center"
         justifyContent="center"
+        py={12}
       >
-        <Spinner size="lg" color="#2800D7" mb={4} />
-        <Text color="#5E6272" fontSize="md">
-          Loading documents...
+        <Spinner size="xl" color="purple.500" thickness="4px" mb={4} />
+        <Text color="gray.600" fontSize="sm" fontWeight="medium">
+          Loading sections...
         </Text>
       </Box>
     );
@@ -126,9 +127,12 @@ export default function DocumentTree({
 
   if (error) {
     return (
-      <Alert status="error">
+      <Alert status="error" variant="left-accent" borderRadius="md" m={4}>
         <AlertIcon />
-        Failed to load documents
+        <VStack align="start" spacing={1}>
+          <Text fontWeight="bold">Failed to Load</Text>
+          <Text fontSize="sm">Unable to retrieve documents</Text>
+        </VStack>
       </Alert>
     );
   }

@@ -17,8 +17,11 @@ import {
   Button,
   HStack,
   Icon,
+  Flex,
+  Badge,
 } from "@chakra-ui/react";
 import { MdNavigateBefore, MdNavigateNext } from "react-icons/md";
+import { HiDocumentText } from "react-icons/hi2";
 import { useDocument } from "@/lib/api";
 
 interface DocumentContentProps {
@@ -43,80 +46,124 @@ export default function DocumentContent({
   // This shouldn't happen with dynamic routing, but handle gracefully
   if (!documentId) {
     return (
-      <Box
-        h="100%"
-        display="flex"
-        alignItems="center"
-        justifyContent="center"
-        p={8}
+      <Flex
+        h="full"
+        direction="column"
+        align="center"
+        justify="center"
+        px={8}
+        py={12}
       >
-        <Text color="#5E6272" fontSize="lg">
+        <Icon as={HiDocumentText} boxSize={16} color="purple.400" mb={4} />
+        <Text color="gray.600" fontSize="lg" textAlign="center">
           Select a section from the left to view its content
         </Text>
-      </Box>
+      </Flex>
     );
   }
 
   if (isLoading) {
     return (
-      <Box
-        h="100%"
-        display="flex"
-        alignItems="center"
-        justifyContent="center"
-        p={8}
+      <Flex
+        h="full"
+        direction="column"
+        align="center"
+        justify="center"
+        px={8}
+        py={12}
       >
-        <Spinner size="lg" color="#2800D7" />
-        <Text ml={4} color="#5E6272">
-          Loading content...
+        <Spinner size="xl" color="purple.500" thickness="4px" mb={4} />
+        <Text color="gray.600" fontSize="md">
+          Loading document...
         </Text>
-      </Box>
+      </Flex>
     );
   }
 
   if (error) {
     return (
-      <Box p={8}>
-        <Alert status="error">
-          <AlertIcon />
-          Failed to load document content
+      <Flex h="full" align="center" justify="center" px={8}>
+        <Alert
+          status="error"
+          variant="subtle"
+          flexDirection="column"
+          alignItems="center"
+          justifyContent="center"
+          textAlign="center"
+          borderRadius="lg"
+          py={8}
+        >
+          <AlertIcon boxSize={10} mr={0} mb={4} />
+          <Heading size="md" mb={2}>
+            Failed to Load Document
+          </Heading>
+          <Text>Unable to fetch document content. Please try again.</Text>
         </Alert>
-      </Box>
+      </Flex>
     );
   }
 
   if (!data) {
     return (
-      <Box p={8}>
-        <Alert status="warning">
-          <AlertIcon />
-          Document not found
+      <Flex h="full" align="center" justify="center" px={8}>
+        <Alert
+          status="warning"
+          variant="subtle"
+          flexDirection="column"
+          alignItems="center"
+          justifyContent="center"
+          textAlign="center"
+          borderRadius="lg"
+          py={8}
+        >
+          <AlertIcon boxSize={10} mr={0} mb={4} />
+          <Heading size="md" mb={2}>
+            Document Not Found
+          </Heading>
+          <Text>The requested document could not be located.</Text>
         </Alert>
-      </Box>
+      </Flex>
     );
   }
 
   return (
-    <Box h="100%" display="flex" flexDirection="column">
+    <Box h="full" display="flex" flexDirection="column">
       {/* Main Content Area - Scrollable */}
       <Box flex="1" overflowY="auto" p={8}>
-        <VStack align="stretch" spacing={6}>
+        <VStack align="stretch" spacing={6} maxW="900px" mx="auto">
           {/* Document Header */}
           <Box>
-            <Text fontSize="sm" color="#5E6272" fontWeight="medium" mb={2}>
-              {data.metadata.main_section}
-            </Text>
-            <Heading size="lg" color="#32343C" mb={2}>
+            <HStack spacing={3} mb={3}>
+              <Badge colorScheme="purple" fontSize="xs" px={2} py={1}>
+                {data.metadata.main_section}
+              </Badge>
+              <Badge
+                variant="outline"
+                colorScheme="gray"
+                fontSize="xs"
+                px={2}
+                py={1}
+              >
+                Section {data.metadata.subsection_number}
+              </Badge>
+            </HStack>
+            <Heading size="xl" color="gray.800" mb={3}>
               {data.metadata.section}
             </Heading>
-            <Box h="2px" w="60px" bg="#2800D7" />
+            <Box h="3px" w="80px" bg="purple.500" borderRadius="full" />
           </Box>
 
           {/* Document Content */}
-          <Box>
+          <Box
+            p={6}
+            bg="gray.50"
+            borderRadius="lg"
+            borderLeft="4px solid"
+            borderColor="purple.400"
+          >
             <Text
               fontSize="md"
-              color="#32343C"
+              color="gray.800"
               lineHeight="1.8"
               whiteSpace="pre-wrap"
               sx={{
@@ -130,38 +177,51 @@ export default function DocumentContent({
           </Box>
 
           {/* Metadata Footer */}
-          <Box mt={8} pt={4} borderTop="1px solid" borderColor="#DBDCE1">
-            <Text fontSize="xs" color="#5E6272">
-              Section: {data.metadata.subsection_number}
-            </Text>
+          <Box
+            mt={4}
+            pt={4}
+            borderTop="2px solid"
+            borderColor="gray.200"
+            color="gray.500"
+          >
+            <Flex align="center" gap={2}>
+              <Icon as={HiDocumentText} boxSize={4} />
+              <Text fontSize="sm" fontWeight="medium">
+                Legal Document Reference
+              </Text>
+            </Flex>
           </Box>
         </VStack>
       </Box>
 
       {/* Navigation Footer - Fixed at Bottom */}
-      <Box borderTop="1px solid" borderColor="#DBDCE1" p={4} bg="#FBFBFB">
-        <HStack justify="space-between">
+      <Box
+        borderTop="1px solid"
+        borderColor="gray.200"
+        p={4}
+        bg="gray.50"
+        boxShadow="0 -2px 10px rgba(0,0,0,0.05)"
+      >
+        <HStack justify="space-between" maxW="900px" mx="auto">
           <Button
-            leftIcon={<Icon as={MdNavigateBefore} boxSize="20px" />}
+            leftIcon={<Icon as={MdNavigateBefore} />}
             onClick={onNavigatePrev}
             isDisabled={!hasPrev}
             variant="outline"
             colorScheme="purple"
             size="md"
-            _hover={{ bg: hasPrev ? "#EEEBFF" : undefined }}
           >
-            Previous Section
+            Previous
           </Button>
           <Button
-            rightIcon={<Icon as={MdNavigateNext} boxSize="20px" />}
+            rightIcon={<Icon as={MdNavigateNext} />}
             onClick={onNavigateNext}
             isDisabled={!hasNext}
             variant="outline"
             colorScheme="purple"
             size="md"
-            _hover={{ bg: hasNext ? "#EEEBFF" : undefined }}
           >
-            Next Section
+            Next
           </Button>
         </HStack>
       </Box>

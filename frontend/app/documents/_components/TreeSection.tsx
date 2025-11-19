@@ -42,9 +42,11 @@ export default function TreeSection({
         py={2}
         pl={`${level * 16 + 16}px`}
         cursor="pointer"
-        bg={isSelected ? "#EEEBFF" : "transparent"}
-        borderLeft={isSelected ? "3px solid #2800D7" : "3px solid transparent"}
-        _hover={{ bg: isSelected ? "#EEEBFF" : "#F7F7F8" }}
+        bg={isSelected ? "purple.50" : "transparent"}
+        borderLeft="3px solid"
+        borderColor={isSelected ? "purple.600" : "transparent"}
+        _hover={{ bg: isSelected ? "purple.50" : "gray.50" }}
+        transition="all 0.2s"
         onClick={() => {
           if (hasChildren) {
             setIsExpanded(!isExpanded);
@@ -60,14 +62,15 @@ export default function TreeSection({
               as={isExpanded ? MdExpandMore : MdChevronRight}
               boxSize="20px"
               mr={1}
-              color="#5E6272"
+              color={isSelected ? "purple.600" : "gray.500"}
+              transition="transform 0.2s"
             />
           )}
           <Box>
             <Text
               fontSize="sm"
               fontWeight={level === 0 ? "bold" : "medium"}
-              color={isSelected ? "#2800D7" : "#32343C"}
+              color={isSelected ? "purple.700" : "gray.800"}
             >
               {node.sectionNumber}. {node.title}
             </Text>
