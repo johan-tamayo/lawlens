@@ -134,3 +134,101 @@ class TestOutput:
         assert output.citations[0].source == "First"
         assert output.citations[1].source == "Second"
         assert output.citations[2].source == "Third"
+
+
+class TestDocumentModels:
+    """Tests for Document-related models."""
+
+    def test_document_metadata_creation(self):
+        """Test DocumentMetadata creation."""
+        from app.models import DocumentMetadata
+
+        metadata = DocumentMetadata(
+            section="Thievery 1.1",
+            main_section="Thievery",
+            subsection_number="1.1",
+        )
+
+        assert metadata.section == "Thievery 1.1"
+        assert metadata.main_section == "Thievery"
+        assert metadata.subsection_number == "1.1"
+
+    def test_document_detail_creation(self):
+        """Test DocumentDetail creation."""
+        from app.models import DocumentDetail, DocumentMetadata
+
+        metadata = DocumentMetadata(
+            section="Test 1.1",
+            main_section="Test",
+            subsection_number="1.1",
+        )
+
+        detail = DocumentDetail(
+            id="0",
+            text="Test document text",
+            metadata=metadata,
+        )
+
+        assert detail.id == "0"
+        assert detail.text == "Test document text"
+        assert detail.metadata.section == "Test 1.1"
+
+    def test_document_summary_creation(self):
+        """Test DocumentSummary creation."""
+        from app.models import DocumentSummary
+
+        summary = DocumentSummary(
+            id="0",
+            section="Test 1.1",
+            main_section="Test",
+            subsection_number="1.1",
+            preview="Preview text",
+        )
+
+        assert summary.id == "0"
+        assert summary.section == "Test 1.1"
+        assert summary.preview == "Preview text"
+
+    def test_document_list_response_creation(self):
+        """Test DocumentListResponse creation."""
+        from app.models import DocumentListResponse, DocumentSummary
+
+        summaries = [
+            DocumentSummary(
+                id="0",
+                section="Test 1.1",
+                main_section="Test",
+                subsection_number="1.1",
+                preview="Preview 1",
+            ),
+            DocumentSummary(
+                id="1",
+                section="Test 1.2",
+                main_section="Test",
+                subsection_number="1.2",
+                preview="Preview 2",
+            ),
+        ]
+
+        response = DocumentListResponse(total=2, documents=summaries)
+
+        assert response.total == 2
+        assert len(response.documents) == 2
+        assert response.documents[0].id == "0"
+
+    def test_document_models_serialization(self):
+        """Test document models serialize to JSON."""
+        from app.models import (
+            DocumentDetail,
+            DocumentMetadata,
+        )
+
+        metadata = DocumentMetadata(
+            section="Test 1.1", main_section="Test", subsection_number="1.1"
+        )
+
+        detail = DocumentDetail(id="0", text="Text", metadata=metadata)
+
+        json_str = detail.model_dump_json()
+        assert "Test 1.1" in json_str
+        assert "Text" in json_str

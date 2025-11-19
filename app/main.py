@@ -2,7 +2,7 @@
 
 from fastapi import FastAPI
 
-from app.api.routes import health, query
+from app.api.routes import documents, health, query
 from app.config import settings
 from app.core.lifespan import lifespan
 
@@ -17,3 +17,4 @@ app = FastAPI(
 # Include routers
 app.include_router(query.router)
 app.include_router(health.router)
+app.include_router(documents.router)
