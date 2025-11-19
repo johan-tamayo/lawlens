@@ -31,14 +31,31 @@ cp .env.example .env
 
 3. **Option A: Run with Docker (Recommended)**
 
+**Production Mode:**
+
 ```bash
 docker-compose up --build
 ```
 
+This will start both backend and frontend services:
+
 - Backend API: http://localhost:8000
 - API Documentation: http://localhost:8000/docs
+- Frontend: http://localhost:3000
 
-4. **Option B: Run Locally for Development**
+**Development Mode (with hot reload):**
+
+```bash
+docker-compose -f docker-compose.dev.yml up --build
+```
+
+This provides:
+
+- Backend with hot reload on code changes
+- Frontend with hot reload on code changes
+- Better development experience with faster builds
+
+4. **Option B: Run Locally (Without Docker)**
 
 **Backend:**
 
@@ -112,20 +129,28 @@ npm run format:frontend
 
 ```
 norm-takehome-fullstack/
-├── app/                    # FastAPI backend application
-│   ├── main.py            # Main FastAPI application
-│   └── utils.py           # Utility functions and models
-├── frontend/              # Next.js frontend application
-│   ├── app/              # Next.js app directory
-│   ├── components/       # React components
-│   └── public/          # Static assets
-├── docs/                 # Documentation and reference files
-│   └── laws.pdf         # Game of Thrones laws dataset
-├── .husky/              # Git hooks configuration
-├── pyproject.toml       # Python tool configuration
-├── requirements.txt     # Python dependencies
-├── docker-compose.yml   # Docker services configuration
-└── Dockerfile          # Backend Docker image
+├── app/                       # FastAPI backend application
+│   ├── main.py               # Main FastAPI application
+│   ├── api/                  # API routes
+│   ├── core/                 # Core functionality
+│   ├── models/               # Data models
+│   ├── services/             # Business logic
+│   └── tests/                # Backend tests (82% coverage)
+├── frontend/                 # Next.js frontend application
+│   ├── app/                  # Next.js app directory
+│   ├── lib/                  # Utilities and API client
+│   ├── e2e/                  # E2E tests (Playwright)
+│   ├── __tests__/            # Unit tests (Jest)
+│   ├── Dockerfile            # Production frontend image
+│   └── Dockerfile.dev        # Development frontend image
+├── docs/                     # Documentation and reference files
+│   └── laws.pdf             # Game of Thrones laws dataset
+├── .husky/                  # Git hooks configuration
+├── pyproject.toml           # Python tool configuration
+├── requirements.txt         # Python dependencies
+├── docker-compose.yml       # Production Docker services
+├── docker-compose.dev.yml   # Development Docker services
+└── Dockerfile              # Backend Docker image
 ```
 
 ## API Endpoints
